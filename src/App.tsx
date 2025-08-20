@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import Button from "./components/Button";
 import Input from "./components/Input";
 import List from "./components/List";
+import Modal from "./components/Modal";
 
 const styles = {
   textButton: {
@@ -16,6 +17,8 @@ const styles = {
 };
 
 function App() {
+  const [modalOpened, setModalOpened] = useState(false);
+
   return (
     <div
       style={{
@@ -33,13 +36,18 @@ function App() {
           <span>Organize suas tarefas e mutiplique sua lista</span>
         </div>
         <div>
-          <Button />
+          <Button label="Novo item" onClick={() => setModalOpened(true)} />
         </div>
       </div>
       <>
         <Input />
 
         <List />
+        <Modal
+          opened={modalOpened}
+          title="modal 1"
+          onHide={() => setModalOpened(false)}
+        />
       </>
     </div>
   );

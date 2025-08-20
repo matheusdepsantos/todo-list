@@ -1,3 +1,8 @@
+interface Props {
+  label: string;
+  onClick: () => void;
+}
+
 const styles = {
   btn: {
     width: "97px",
@@ -13,8 +18,12 @@ const styles = {
   },
 };
 
-function Button() {
-  return <button style={styles.btn}>New Item</button>;
+function Button({ label, onClick }: Props) {
+  return (
+    <button style={styles.btn} onClick={() => onClick()}>
+      {label}
+    </button>
+  );
 }
 
 export default Button;
