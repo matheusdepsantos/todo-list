@@ -42,24 +42,63 @@ const styles = {
   },
 };
 
-function List() {
+export interface Tarefa {
+  nome: string;
+  done: boolean;
+}
+
+interface Props {
+  tarefas: Tarefa[];
+  onRemove: (index: number) => void;
+  onComplete: (index: number, isDone: boolean) => void;
+}
+
+function List({ tarefas, onRemove, onComplete }: Props) {
   return (
     <div style={styles.container}>
       <strong style={styles.titleList}>Tarefas</strong>
-      <div style={styles.containerInfoList}>
-        <div style={styles.textTarefa}>
-          <input type="checkbox" name="Lavar roupa" id="" />
-          <span>Lavar roupa</span>
+      {tarefas.map((tarefa: Tarefa, index: number) => (
+        <div style={styles.containerInfoList} key={index}>
+          <div style={{ display: "flex", gap: "5px" }}>
+            {tarefa.done ? (
+              <span
+                className="material-symbols-outlined"
+                style={{ cursor: "pointer", color: "green" }}
+                onClick={() => onComplete(index, tarefa.done)}
+              >
+                check_box
+              </span>
+            ) : (
+              <span
+                className="material-symbols-outlined"
+                style={{ cursor: "pointer" }}
+                onClick={() => onComplete(index, tarefa.done)}
+              >
+                check_box_outline_blank
+              </span>
+            )}
+            <div style={styles.textTarefa}>
+              <span
+                style={{
+                  textDecoration: tarefa.done ? "line-through" : "none",
+                }}
+              >
+                {tarefa.nome}
+              </span>
+            </div>
+          </div>
+          <div style={styles.btnDistance}>
+            <span
+              className="material-symbols-outlined"
+              style={{ cursor: "pointer", color: "red" }}
+              onClick={() => onRemove(index)}
+            >
+              delete
+            </span>
+            {/* </button> */}
+          </div>
         </div>
-        <div style={styles.btnDistance}>
-          <button type="button" style={styles.btnCompletar}>
-            completar
-          </button>
-          <button type="button" style={styles.btnCancelar}>
-            cancelar
-          </button>
-        </div>
-      </div>
+      ))}
     </div>
   );
 }

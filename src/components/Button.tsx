@@ -15,6 +15,7 @@ const styles = {
     borderRadius: "8px",
     border: "none",
     alignItems: "center",
+    cursor: "pointer",
   },
 };
 
