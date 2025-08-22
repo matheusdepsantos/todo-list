@@ -23,18 +23,18 @@ function App() {
   const [novaTarefa, setnovaTarefa] = useState("");
 
   const [tarefas, setTarefas] = useState<Tarefa[]>([
-    {
-      nome: "Lavar a louça",
-      done: false,
-    },
-    {
-      nome: "Fazer a comida",
-      done: true,
-    },
-    {
-      nome: "Buscar o gustavo",
-      done: false,
-    },
+    // {
+    //   nome: "Lavar a louça",
+    //   done: false,
+    // },
+    // {
+    //   nome: "Fazer a comida",
+    //   done: true,
+    // },
+    // {
+    //   nome: "Buscar o gustavo",
+    //   done: false,
+    // },
   ]);
 
   const adicionarTarefa = () => {
@@ -116,7 +116,12 @@ function App() {
               value={novaTarefa}
               onChange={(event) => setnovaTarefa(event)}
             />
-            <Button label="Salvar" onClick={() => adicionarTarefa()} />
+
+            <Button
+              label="Salvar"
+              onClick={() => adicionarTarefa()}
+              disable={novaTarefa.length === 0}
+            />
           </div>
         </Modal>
       </>

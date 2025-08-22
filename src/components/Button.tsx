@@ -1,5 +1,6 @@
 interface Props {
   label: string;
+  disable?: boolean;
   onClick: () => void;
 }
 
@@ -19,9 +20,17 @@ const styles = {
   },
 };
 
-function Button({ label, onClick }: Props) {
+function Button({ label, onClick, disable = false }: Props) {
   return (
-    <button style={styles.btn} onClick={() => onClick()}>
+    <button
+      style={{
+        ...styles.btn,
+        cursor: disable ? "default" : "pointer",
+        opacity: disable ? "0.6" : "1",
+        pointerEvents: disable ? "none" : "auto",
+      }}
+      onClick={() => onClick()}
+    >
       {label}
     </button>
   );
