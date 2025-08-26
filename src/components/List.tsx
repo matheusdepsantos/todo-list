@@ -56,49 +56,78 @@ interface Props {
 function List({ tarefas, onRemove, onComplete }: Props) {
   return (
     <div style={styles.container}>
-      <strong style={styles.titleList}>Tarefas</strong>
-      {tarefas.map((tarefa: Tarefa, index: number) => (
-        <div style={styles.containerInfoList} key={index}>
-          <div style={{ display: "flex", gap: "5px" }}>
-            {tarefa.done ? (
-              <span
-                className="material-symbols-outlined"
-                style={{ cursor: "pointer", color: "green" }}
-                onClick={() => onComplete(index, tarefa.done)}
-              >
-                check_box
-              </span>
-            ) : (
-              <span
-                className="material-symbols-outlined"
-                style={{ cursor: "pointer" }}
-                onClick={() => onComplete(index, tarefa.done)}
-              >
-                check_box_outline_blank
-              </span>
-            )}
-            <div style={styles.textTarefa}>
-              <span
-                style={{
-                  textDecoration: tarefa.done ? "line-through" : "none",
-                }}
-              >
-                {tarefa.nome}
-              </span>
+      {tarefas.length > 0 && (
+        <>
+          <strong style={styles.titleList}>Tarefas</strong>
+          {tarefas.map((tarefa: Tarefa, index: number) => (
+            <div style={styles.containerInfoList} key={index}>
+              <div style={{ display: "flex", gap: "5px" }}>
+                {tarefa.done ? (
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ cursor: "pointer", color: "green" }}
+                    onClick={() => onComplete(index, tarefa.done)}
+                  >
+                    check_box
+                  </span>
+                ) : (
+                  <span
+                    className="material-symbols-outlined"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => onComplete(index, tarefa.done)}
+                  >
+                    check_box_outline_blank
+                  </span>
+                )}
+                <div style={styles.textTarefa}>
+                  <span
+                    style={{
+                      textDecoration: tarefa.done ? "line-through" : "none",
+                    }}
+                  >
+                    {tarefa.nome}
+                  </span>
+                </div>
+              </div>
+              <div style={styles.btnDistance}>
+                <span
+                  className="material-symbols-outlined"
+                  style={{ cursor: "pointer", color: "red" }}
+                  onClick={() => onRemove(index)}
+                >
+                  delete
+                </span>
+                {/* </button> */}
+              </div>
             </div>
-          </div>
-          <div style={styles.btnDistance}>
-            <span
-              className="material-symbols-outlined"
-              style={{ cursor: "pointer", color: "red" }}
-              onClick={() => onRemove(index)}
-            >
-              delete
-            </span>
-            {/* </button> */}
-          </div>
-        </div>
-      ))}
+          ))}
+        </>
+      )}
+      {tarefas.length === 0 && (
+        <>
+          <span
+            className="material-symbols-outlined"
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "47%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            folder_open
+          </span>
+          <strong
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            Lista vazia
+          </strong>
+        </>
+      )}
     </div>
   );
 }

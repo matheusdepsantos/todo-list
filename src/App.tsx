@@ -17,6 +17,8 @@ const styles = {
 };
 
 function App() {
+  const [tarefasFiltradas, setTarefasFiltradas] = useState();
+
   const [modalOpened, setModalOpened] = useState(false);
 
   const [pesquisarTarefa, setPesquisarTarefa] = useState("");
