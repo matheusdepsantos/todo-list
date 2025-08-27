@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import Button from "./components/Button";
 import Input from "./components/Input";
 import List, { Tarefa } from "./components/List";
 import Modal from "./components/Modal";
+import DatePicker from "./components/DatePicker";
 
 const styles = {
   textButton: {
@@ -17,30 +18,30 @@ const styles = {
 };
 
 function App() {
-  const [tarefasFiltradas, setTarefasFiltradas] = useState();
-
   const [modalOpened, setModalOpened] = useState(false);
 
   const [pesquisarTarefa, setPesquisarTarefa] = useState("");
   const [novaTarefa, setnovaTarefa] = useState("");
+  const [data, setData] = useState("");
 
-  const [tarefas, setTarefas] = useState<Tarefa[]>([
-    // {
-    //   nome: "Lavar a louça",
-    //   done: false,
-    // },
-    // {
-    //   nome: "Fazer a comida",
-    //   done: true,
-    // },
-    // {
-    //   nome: "Buscar o gustavo",
-    //   done: false,
-    // },
-  ]);
+  const [tarefasFiltradas, setTarefasFiltradas] = useState<Tarefa[]>([]);
+  const [tarefas, setTarefas] = useState<Tarefa[]>([]);
+
+  useEffect(() => {
+    const tarefasFiltradas = tarefas.filter((tarefa) =>
+      tarefa.nome.toLowerCase().includes(pesquisarTarefa.toLowerCase())
+    );
+    setTarefasFiltradas(tarefasFiltradas);
+    console.log(tarefasFiltradas);
+    if (pesquisarTarefa.length === 0) setTarefasFiltradas(tarefas);
+  }, [pesquisarTarefa, tarefas]);
 
   const adicionarTarefa = () => {
-    setTarefas((tarefas) => [...tarefas, { nome: novaTarefa, done: false }]);
+    console.log(data);
+    setTarefas((tarefas) => [
+      ...tarefas,
+      { nome: novaTarefa, data: data, done: false },
+    ]);
     setModalOpened(false);
     setnovaTarefa("");
   };
@@ -93,11 +94,40 @@ function App() {
           <Button label="Novo item" onClick={() => setModalOpened(true)} />
         </div>
 
-        <List
-          tarefas={tarefas}
+        {/* <List
+          tarefas={tarefasFiltradas}
           onRemove={(e) => removerTarefa(e)}
           onComplete={(i, d) => completarTarefa(i, d)}
-        />
+        /> */}
+
+        <table>
+          <tr
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            <th>Tarefa</th>
+            <th>Data 1</th>
+            <th>Data 2</th>
+            <th>Editar</th>
+          </tr>
+          {tarefas.map((tarefa) => (
+            <tr
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                width: "100%",
+              }}
+            >
+              <td>{tarefa.nome}</td>
+              <td>{tarefa.data}</td>
+              <td>{tarefa.data}</td>
+              <td>Editar</td>
+            </tr>
+          ))}
+        </table>
 
         <Modal
           opened={modalOpened}
@@ -119,10 +149,17 @@ function App() {
               onChange={(event) => setnovaTarefa(event)}
             />
 
+            <Input
+              type="date"
+              placeholder="Digite a data"
+              value={data}
+              onChange={(event) => setData(event)}
+            />
+
             <Button
               label="Salvar"
               onClick={() => adicionarTarefa()}
-              disable={novaTarefa.length === 0}
+              disable={novaTarefa.length === 0 || data.length === 0}
             />
           </div>
         </Modal>

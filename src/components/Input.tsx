@@ -8,15 +8,16 @@ const styles = {
 };
 
 interface Props {
+  type?: string;
   placeholder: string;
   value: string;
   onChange: (e: string) => void;
 }
 
-function Input({ placeholder, value, onChange }: Props) {
+function Input({ type = "text", placeholder, value, onChange }: Props) {
   return (
     <input
-      type="text"
+      type={type}
       placeholder={placeholder}
       style={styles.inputInsert}
       value={value}

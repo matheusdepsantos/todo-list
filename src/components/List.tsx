@@ -45,6 +45,7 @@ const styles = {
 export interface Tarefa {
   nome: string;
   done: boolean;
+  data: string;
 }
 
 interface Props {
@@ -62,7 +63,7 @@ function List({ tarefas, onRemove, onComplete }: Props) {
           {tarefas.map((tarefa: Tarefa, index: number) => (
             <div style={styles.containerInfoList} key={index}>
               <div style={{ display: "flex", gap: "5px" }}>
-                {tarefa.done ? (
+                {tarefa.done && tarefa.data ? (
                   <span
                     className="material-symbols-outlined"
                     style={{ cursor: "pointer", color: "green" }}
@@ -86,6 +87,14 @@ function List({ tarefas, onRemove, onComplete }: Props) {
                     }}
                   >
                     {tarefa.nome}
+                  </span>
+                  <span>-</span>
+                  <span
+                    style={{
+                      textDecoration: tarefa.done ? "line-through" : "none",
+                    }}
+                  >
+                    {new Date(tarefa.data).toLocaleDateString()}
                   </span>
                 </div>
               </div>
