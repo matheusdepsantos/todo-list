@@ -6,6 +6,7 @@ import Input from "./components/Input";
 import List, { Tarefa } from "./components/List";
 import Modal from "./components/Modal";
 import DatePicker from "./components/DatePicker";
+import Table from "./components/Table";
 
 const styles = {
   textButton: {
@@ -19,6 +20,7 @@ const styles = {
 
 function App() {
   const [modalOpened, setModalOpened] = useState(false);
+  const [edit, setEdit] = useState<number | null>(null);
 
   const [pesquisarTarefa, setPesquisarTarefa] = useState("");
   const [novaTarefa, setnovaTarefa] = useState("");
@@ -37,13 +39,37 @@ function App() {
   }, [pesquisarTarefa, tarefas]);
 
   const adicionarTarefa = () => {
-    console.log(data);
-    setTarefas((tarefas) => [
-      ...tarefas,
-      { nome: novaTarefa, data: data, done: false },
-    ]);
-    setModalOpened(false);
-    setnovaTarefa("");
+    console.log(edit);
+    if (edit === null) {
+      setTarefas((tarefas) => [
+        ...tarefas,
+        { nome: novaTarefa, data: data, done: false },
+      ]);
+      setModalOpened(false);
+      setnovaTarefa("");
+      setData("");
+    } else {
+      const newTarefas: any = tarefas.map((item, i) => {
+        if (i !== edit) {
+          return item;
+        }
+
+        if (i === edit) {
+          return {
+            nome: novaTarefa,
+            data: data,
+            done: false,
+          };
+        }
+      });
+
+      console.log(newTarefas);
+
+      setTarefas(newTarefas);
+      setModalOpened(false);
+      setnovaTarefa("");
+      setData("");
+    }
   };
 
   const completarTarefa = (index: number, isDone: boolean) => {
@@ -91,7 +117,13 @@ function App() {
             value={pesquisarTarefa}
             onChange={(event) => setPesquisarTarefa(event)}
           />
-          <Button label="Novo item" onClick={() => setModalOpened(true)} />
+          <Button
+            label="Novo item"
+            onClick={() => {
+              setModalOpened(true);
+              setEdit(null);
+            }}
+          />
         </div>
 
         {/* <List
@@ -100,34 +132,16 @@ function App() {
           onComplete={(i, d) => completarTarefa(i, d)}
         /> */}
 
-        <table>
-          <tr
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100%",
-            }}
-          >
-            <th>Tarefa</th>
-            <th>Data 1</th>
-            <th>Data 2</th>
-            <th>Editar</th>
-          </tr>
-          {tarefas.map((tarefa) => (
-            <tr
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "100%",
-              }}
-            >
-              <td>{tarefa.nome}</td>
-              <td>{tarefa.data}</td>
-              <td>{tarefa.data}</td>
-              <td>Editar</td>
-            </tr>
-          ))}
-        </table>
+        <Table
+          tarefas={tarefasFiltradas}
+          onEdit={(e, f) => {
+            setnovaTarefa(f.nome);
+            setData(f.data);
+            setModalOpened(true);
+            setEdit(e);
+          }}
+          onRemove={(e) => removerTarefa(e)}
+        />
 
         <Modal
           opened={modalOpened}
