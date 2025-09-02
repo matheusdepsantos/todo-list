@@ -46,6 +46,7 @@ export interface Tarefa {
   nome: string;
   done: boolean;
   data: string;
+  finalizado?: string;
 }
 
 interface Props {
@@ -106,7 +107,6 @@ function List({ tarefas, onRemove, onComplete }: Props) {
                 >
                   delete
                 </span>
-                {/* </button> */}
               </div>
             </div>
           ))}

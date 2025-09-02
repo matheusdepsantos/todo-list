@@ -1,32 +1,31 @@
 import { useState } from "react";
-import { Tarefa } from "./List";
 
-interface Props {
-  tarefas: any;
-  onRemove: (index: number) => void;
-  onEdit: (index: number, tarefa: any) => void;
+export interface Tarefa {
+  nome: string;
+  done: boolean;
+  data: string;
 }
 
-function Table({ tarefas, onRemove, onEdit }: Props) {
+interface Props {
+  tarefas: Tarefa[];
+  onRemove: (index: number) => void;
+  onEdit: (index: number, tarefa: any) => void;
+  onComplete: (index: number, isDone: any) => void;
+}
+
+function Table({ tarefas, onRemove, onEdit, onComplete }: Props) {
   return (
     <div>
       <table style={{ width: "100%" }}>
         <thead>
           <tr>
             <th>Tarefa</th>
-            <th>Data 1</th>
-            <th>Data 2</th>
+            <th>Data de criação</th>
+            <th>Finalizado em</th>
             <th>&nbsp;</th>
           </tr>
         </thead>
-        <div
-          style={{
-            overflowY: "scroll",
-            maxHeight: "550px",
-            width: "100%",
-            display: "block",
-          }}
-        >
+        <div>
           <tbody
             style={{
               display: "inline",
@@ -39,12 +38,33 @@ function Table({ tarefas, onRemove, onEdit }: Props) {
                 }}
                 key={index}
               >
-                <td>{tarefa.nome}</td>
+                <td
+                  style={{
+                    textDecoration: tarefa.done ? "line-through" : "none",
+                  }}
+                >
+                  {tarefa.nome}
+                </td>
                 <td>{tarefa.data}</td>
-                <td>{tarefa.data}</td>
+                <td>{tarefa.finalizado}</td>
                 <td>
                   <span
-                    style={{ cursor: "pointer" }}
+                    style={{
+                      cursor: tarefa.done ? "not-allowed" : "pointer",
+                      color: tarefa.done ? "gray" : "green",
+                      pointerEvents: tarefa.done ? "none" : "auto",
+                    }}
+                    className="material-symbols-outlined"
+                    onClick={() => onComplete(index, tarefa.done)}
+                  >
+                    check
+                  </span>
+                  <span
+                    style={{
+                      cursor: tarefa.done ? "not-allowed" : "pointer",
+                      color: tarefa.done ? "gray" : "blue",
+                      pointerEvents: tarefa.done ? "none" : "auto",
+                    }}
                     className="material-symbols-outlined"
                     onClick={() => onEdit(index, tarefa)}
                   >
@@ -52,7 +72,11 @@ function Table({ tarefas, onRemove, onEdit }: Props) {
                   </span>
                   <span
                     className="material-symbols-outlined"
-                    style={{ cursor: "pointer", color: "red" }}
+                    style={{
+                      cursor: tarefa.done ? "not-allowed" : "pointer",
+                      color: tarefa.done ? "gray" : "red",
+                      pointerEvents: tarefa.done ? "none" : "auto",
+                    }}
                     onClick={() => onRemove(index)}
                   >
                     delete

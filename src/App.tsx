@@ -19,6 +19,7 @@ const styles = {
 };
 
 function App() {
+  const [modalFinalizar, setModalFinalizar] = useState(false);
   const [modalOpened, setModalOpened] = useState(false);
   const [edit, setEdit] = useState<number | null>(null);
 
@@ -26,15 +27,20 @@ function App() {
   const [novaTarefa, setnovaTarefa] = useState("");
   const [data, setData] = useState("");
 
+  const [finalizado, setFinalizado] = useState("");
+
   const [tarefasFiltradas, setTarefasFiltradas] = useState<Tarefa[]>([]);
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
+  const [tarefaSelecionada, setTarefaSelecionada] = useState<{
+    index: number;
+    isDone: boolean;
+  }>();
 
   useEffect(() => {
     const tarefasFiltradas = tarefas.filter((tarefa) =>
       tarefa.nome.toLowerCase().includes(pesquisarTarefa.toLowerCase())
     );
     setTarefasFiltradas(tarefasFiltradas);
-    console.log(tarefasFiltradas);
     if (pesquisarTarefa.length === 0) setTarefasFiltradas(tarefas);
   }, [pesquisarTarefa, tarefas]);
 
@@ -62,9 +68,7 @@ function App() {
           };
         }
       });
-
       console.log(newTarefas);
-
       setTarefas(newTarefas);
       setModalOpened(false);
       setnovaTarefa("");
@@ -72,10 +76,13 @@ function App() {
     }
   };
 
-  const completarTarefa = (index: number, isDone: boolean) => {
+  const completarTarefa = () => {
     const copyArray = [...tarefas];
-    copyArray[index].done = !isDone;
+    copyArray[tarefaSelecionada?.index!].done = !tarefaSelecionada?.isDone;
+    copyArray[tarefaSelecionada?.index!].finalizado = finalizado;
     setTarefas(copyArray);
+    setModalFinalizar(false);
+    setFinalizado("");
   };
 
   const removerTarefa = (index: number) => {
@@ -100,9 +107,6 @@ function App() {
           <h1>ToDo List</h1>
           <span>Organize suas tarefas e mutiplique sua lista</span>
         </div>
-        {/* <div>
-          <Button label="Novo item" onClick={() => setModalOpened(true)} />
-        </div> */}
       </div>
       <>
         <div
@@ -126,12 +130,6 @@ function App() {
           />
         </div>
 
-        {/* <List
-          tarefas={tarefasFiltradas}
-          onRemove={(e) => removerTarefa(e)}
-          onComplete={(i, d) => completarTarefa(i, d)}
-        /> */}
-
         <Table
           tarefas={tarefasFiltradas}
           onEdit={(e, f) => {
@@ -141,6 +139,13 @@ function App() {
             setEdit(e);
           }}
           onRemove={(e) => removerTarefa(e)}
+          onComplete={(i, d) => {
+            setModalFinalizar(true);
+            setTarefaSelecionada({
+              index: i,
+              isDone: d,
+            });
+          }}
         />
 
         <Modal
@@ -174,6 +179,35 @@ function App() {
               label="Salvar"
               onClick={() => adicionarTarefa()}
               disable={novaTarefa.length === 0 || data.length === 0}
+            />
+          </div>
+        </Modal>
+
+        <Modal
+          opened={modalFinalizar}
+          title="Finalizar tarefa"
+          onHide={() => setModalFinalizar(false)}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+              justifyContent: "flex-end",
+              alignItems: "flex-end",
+            }}
+          >
+            <Input
+              type="date"
+              placeholder="Digite a data"
+              value={finalizado}
+              onChange={(event) => setFinalizado(event)}
+            />
+
+            <Button
+              label="Finalizar"
+              onClick={() => completarTarefa()}
+              disable={finalizado.length === 0}
             />
           </div>
         </Modal>
