@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import Button from "./components/Button";
 import Input from "./components/Input";
 import List, { Tarefa } from "./components/List";
 import Modal from "./components/Modal";
-import DatePicker from "./components/DatePicker";
 import Table from "./components/Table";
+import Toast, { Severity } from "./components/Toast";
 
 const styles = {
   textButton: {
@@ -23,6 +22,14 @@ function App() {
   const [modalOpened, setModalOpened] = useState(false);
   const [edit, setEdit] = useState<number | null>(null);
 
+  const [newToast, setNewToast] = useState(false);
+
+  const [toast, setToast] = useState({
+    mensagem: "",
+    severity: Severity.SUCCESS,
+    active: false,
+  });
+
   const [pesquisarTarefa, setPesquisarTarefa] = useState("");
   const [novaTarefa, setnovaTarefa] = useState("");
   const [data, setData] = useState("");
@@ -37,23 +44,44 @@ function App() {
   }>();
 
   useEffect(() => {
-    const tarefasFiltradas = tarefas.filter((tarefa) =>
+    buscarLocalStorage();
+  }, []);
+
+  useEffect(() => {
+    const tarefasFiltradas = tarefas?.filter((tarefa: any) =>
       tarefa.nome.toLowerCase().includes(pesquisarTarefa.toLowerCase())
     );
     setTarefasFiltradas(tarefasFiltradas);
     if (pesquisarTarefa.length === 0) setTarefasFiltradas(tarefas);
   }, [pesquisarTarefa, tarefas]);
 
+  const buscarLocalStorage = () => {
+    const tarefasStorage: any = localStorage.getItem("tarefas");
+    const tarefas = JSON.parse(tarefasStorage);
+
+    setTarefas(tarefas);
+  };
+
+  const salvarLocalStorage = (tarefas: Tarefa[]) => {
+    localStorage.setItem("tarefas", JSON.stringify(tarefas));
+  };
+
   const adicionarTarefa = () => {
-    console.log(edit);
     if (edit === null) {
-      setTarefas((tarefas) => [
+      const newTarefas = [
         ...tarefas,
         { nome: novaTarefa, data: data, done: false },
-      ]);
+      ];
+      salvarLocalStorage(newTarefas);
+      buscarLocalStorage();
       setModalOpened(false);
       setnovaTarefa("");
       setData("");
+      setToast({
+        active: true,
+        mensagem: "Tarefa criada com sucesso",
+        severity: Severity.SUCCESS,
+      });
     } else {
       const newTarefas: any = tarefas.map((item, i) => {
         if (i !== edit) {
@@ -68,11 +96,16 @@ function App() {
           };
         }
       });
-      console.log(newTarefas);
-      setTarefas(newTarefas);
+      salvarLocalStorage(newTarefas);
+      buscarLocalStorage();
       setModalOpened(false);
       setnovaTarefa("");
       setData("");
+      setToast({
+        active: true,
+        mensagem: "Tarefa editada com sucesso",
+        severity: Severity.INFO,
+      });
     }
   };
 
@@ -80,15 +113,27 @@ function App() {
     const copyArray = [...tarefas];
     copyArray[tarefaSelecionada?.index!].done = !tarefaSelecionada?.isDone;
     copyArray[tarefaSelecionada?.index!].finalizado = finalizado;
-    setTarefas(copyArray);
+    salvarLocalStorage(copyArray);
+    buscarLocalStorage();
     setModalFinalizar(false);
     setFinalizado("");
+    setToast({
+      active: true,
+      mensagem: "Tarefa finalizada com sucesso",
+      severity: Severity.WARNING,
+    });
   };
 
   const removerTarefa = (index: number) => {
     const copyArray = [...tarefas];
     copyArray.splice(index, 1);
-    setTarefas(copyArray);
+    salvarLocalStorage(copyArray);
+    buscarLocalStorage();
+    setToast({
+      active: true,
+      mensagem: "Tarefa removida com sucesso",
+      severity: Severity.DANGER,
+    });
   };
 
   return (
@@ -212,6 +257,15 @@ function App() {
           </div>
         </Modal>
       </>
+
+      <Toast
+        mensagem={toast.mensagem}
+        severity={toast.severity}
+        active={toast.active}
+        onClose={() =>
+          setToast({ active: false, mensagem: "", severity: Severity.SUCCESS })
+        }
+      />
     </div>
   );
 }
