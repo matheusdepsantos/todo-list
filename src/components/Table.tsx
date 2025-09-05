@@ -31,7 +31,7 @@ function Table({ tarefas, onRemove, onEdit, onComplete }: Props) {
               display: "inline",
             }}
           >
-            {tarefas.map((tarefa: any, index: number) => (
+            {tarefas?.map((tarefa: any, index: number) => (
               <tr
                 style={{
                   display: "flex",

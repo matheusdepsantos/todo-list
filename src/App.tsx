@@ -58,7 +58,6 @@ function App() {
   const buscarLocalStorage = () => {
     const tarefasStorage: any = localStorage.getItem("tarefas");
     const tarefas = JSON.parse(tarefasStorage);
-
     setTarefas(tarefas);
   };
 
